@@ -40,6 +40,16 @@ const GamesService = {
       .then(([game]) => game)
       .then(game => this.RespondWithCurrentGame(knex, game.game_room));
   },
+  createNewGame(knex, clearBoard, game_room) {
+    return knex('board')
+      .update({
+        board: clearBoard,
+      })
+      .where({ game_room })
+      .returning('*')
+      .then(([game]) => game)
+      .then(game => this.RespondWithCurrentGame(knex, game.game_room));
+  },
 };
 
 module.exports = GamesService;

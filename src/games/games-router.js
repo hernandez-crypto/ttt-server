@@ -18,6 +18,22 @@ gamesRouter
   });
 
 gamesRouter
+  .route('/:game_room/rematch')
+  .all(requireAuth)
+  .all(checkGameExists)
+  .post(jsonBodyParser, (req, res, next) => {
+    GamesService.createNewGame(
+      req.app.get('db'),
+      req.body.board,
+      req.params.game_room
+    )
+      .then(board => {
+        res.json({ board }, 200).end();
+      })
+      .catch(next);
+  });
+
+gamesRouter
   .route('/:game_room')
   .all(requireAuth)
   .all(checkGameExists)
@@ -85,14 +101,14 @@ gamesRouter
             playerOneMoves.includes(b) &&
             playerOneMoves.includes(c)
           ) {
-            return console.log('Player One has Won');
+            return { winner: 'playerOne' };
           }
           if (
             playerTwoMoves.includes(a) &&
             playerTwoMoves.includes(b) &&
             playerTwoMoves.includes(c)
           ) {
-            return console.log('Player Two has Won');
+            return { winner: 'playerTwo' };
           }
         });
         return game;
