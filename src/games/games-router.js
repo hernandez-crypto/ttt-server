@@ -94,6 +94,7 @@ gamesRouter
           [0, 4, 8],
           [2, 4, 6],
         ];
+        let winner;
         winCombos.forEach(item => {
           let [a, b, c] = item;
           if (
@@ -101,23 +102,30 @@ gamesRouter
             playerOneMoves.includes(b) &&
             playerOneMoves.includes(c)
           ) {
-            return { winner: 'playerOne' };
+            winner = 'playerOne';
+            return;
           }
           if (
             playerTwoMoves.includes(a) &&
             playerTwoMoves.includes(b) &&
             playerTwoMoves.includes(c)
           ) {
-            return { winner: 'playerTwo' };
+            winner = 'playerTwo';
+            return;
           }
         });
-        return game;
+        return winner ? { winner, game } : game;
       })
-      .then(game => {
-        res
-          .status(201)
-          .location(path.posix.join(req.originalUrl, `/${game.id}`))
-          .json(game);
+      .then(res => {
+        res.winner
+          ? res
+              .status(201)
+              .location(path.posix.join(req.originalUrl, `/${res.game.id}`))
+              .json({ game, winner })
+          : res
+              .status(201)
+              .location(path.posix.join(req.originalUrl, `/${game.id}`))
+              .json(game);
       })
       .catch(next);
   });
