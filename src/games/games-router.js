@@ -114,7 +114,7 @@ gamesRouter
             return;
           }
         });
-        return !winner ? { winner, game } : game;
+        return winner !== undefined ? { winner, game } : game;
       })
       .then(res => {
         res.winner
