@@ -73,9 +73,12 @@ gamesRouter
       req.body.next_player
     )
       .then(game => {
+        console.log(game, 'initial');
         let boardCopy = [...game.board.split('')];
+        console.log(game, 'copy made');
         let playerOneMoves = [];
         let playerTwoMoves = [];
+        let winner;
         boardCopy.forEach((square, index) => {
           if (square === 'X') {
             playerOneMoves = [...playerOneMoves, index];
@@ -94,7 +97,6 @@ gamesRouter
           [0, 4, 8],
           [2, 4, 6],
         ];
-        let winner;
         winCombos.forEach(item => {
           let [a, b, c] = item;
           if (
@@ -114,19 +116,14 @@ gamesRouter
             return;
           }
         });
-        let response = winner === undefined ? game : { winner, game };
-        return response;
+        game = winner === undefined ? game : { ...game, winner };
+        return game;
       })
-      .then(res => {
-        res.winner
-          ? res
-              .status(201)
-              .location(path.posix.join(req.originalUrl, `/${res.game.id}`))
-              .json({ game, winner })
-          : res
-              .status(201)
-              .location(path.posix.join(req.originalUrl, `/${game.id}`))
-              .json(game);
+      .then(game => {
+        res
+          .status(201)
+          .location(path.posix.join(req.originalUrl, `/${game.id}`))
+          .json(game);
       })
       .catch(next);
   });
