@@ -1,5 +1,3 @@
-/* eslint-disable no-console */
-/* eslint-disable quotes */
 const GamesService = {
   CreateNewGame(knex, player_one, game_room) {
     return knex
@@ -40,11 +38,10 @@ const GamesService = {
       .then(([game]) => game)
       .then(game => this.RespondWithCurrentGame(knex, game.game_room));
   },
-  createNewGame(knex, clearBoard, game_room) {
+  clearBoard(knex, game_room, winner) {
     return knex('board')
-      .update({
-        board: clearBoard,
-      })
+      .update(winner)
+      .update({ board: '000000000' })
       .where({ game_room })
       .returning('*')
       .then(([game]) => game)

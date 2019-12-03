@@ -12,23 +12,10 @@ gamesRouter
     const { game_room } = req.body;
     GamesService.CreateNewGame(req.app.get('db'), req.user, game_room)
       .then(board => {
-        res.json({ board }, 200).end();
-      })
-      .catch(next);
-  });
-
-gamesRouter
-  .route('/:game_room/rematch')
-  .all(requireAuth)
-  .all(checkGameExists)
-  .post(jsonBodyParser, (req, res, next) => {
-    GamesService.createNewGame(
-      req.app.get('db'),
-      req.body.board,
-      req.params.game_room
-    )
-      .then(board => {
-        res.json({ board }, 200).end();
+        res
+          .status(201)
+          .json({ board })
+          .end();
       })
       .catch(next);
   });
@@ -56,29 +43,20 @@ gamesRouter
       .catch(next);
   })
   .patch(jsonBodyParser, (req, res, next) => {
-    GamesService.RespondWithCurrentGame(
-      req.app.get('db'),
-      req.params.game_room
-    ).then(data => {
-      if (data.player_joined_id == null) {
-        return res.status(400).json({
-          error: `Second player has not yet joined.`, // this entire function should just check if the second player has joined
-        }); //if they have then the patch request should be canceled, currently the front-end is handling this problem
-      }
-    });
-    GamesService.UpdateCurrentGame(
-      req.app.get('db'),
-      req.params.game_room,
-      req.body.board,
-      req.body.next_player
-    )
+    let { game_room } = req.params;
+    let { board, next_player } = req.body;
+    let knex = req.app.get('db');
+    GamesService.UpdateCurrentGame(knex, game_room, board, next_player)
       .then(game => {
-        console.log(game, 'initial');
         let boardCopy = [...game.board.split('')];
-        console.log(game, 'copy made');
         let playerOneMoves = [];
+        let playerOneWon = {
+          player_started_score: game.player_started_score + 1,
+        };
+        let playerTwoWon = {
+          player_joined_score: game.player_joined_score + 1,
+        };
         let playerTwoMoves = [];
-        let winner;
         boardCopy.forEach((square, index) => {
           if (square === 'X') {
             playerOneMoves = [...playerOneMoves, index];
@@ -104,7 +82,7 @@ gamesRouter
             playerOneMoves.includes(b) &&
             playerOneMoves.includes(c)
           ) {
-            winner = 'playerOne';
+            GamesService.clearBoard(knex, game_room, playerOneWon);
             return;
           }
           if (
@@ -112,11 +90,10 @@ gamesRouter
             playerTwoMoves.includes(b) &&
             playerTwoMoves.includes(c)
           ) {
-            winner = 'playerTwo';
+            GamesService.clearBoard(knex, game_room, playerTwoWon);
             return;
           }
         });
-        game = winner === undefined ? game : { ...game, winner };
         return game;
       })
       .then(game => {
