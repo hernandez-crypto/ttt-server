@@ -48,52 +48,7 @@ gamesRouter
     let knex = req.app.get('db');
     GamesService.UpdateCurrentGame(knex, game_room, board, next_player)
       .then(game => {
-        let boardCopy = [...game.board.split('')];
-        let playerOneMoves = [];
-        let playerOneWon = {
-          player_started_score: game.player_started_score + 1,
-        };
-        let playerTwoWon = {
-          player_joined_score: game.player_joined_score + 1,
-        };
-        let playerTwoMoves = [];
-        boardCopy.forEach((square, index) => {
-          if (square === 'X') {
-            playerOneMoves = [...playerOneMoves, index];
-          }
-          if (square === 'O') {
-            playerTwoMoves = [...playerTwoMoves, index];
-          }
-        });
-        const winCombos = [
-          [0, 1, 2],
-          [3, 4, 5],
-          [6, 7, 8],
-          [0, 3, 6],
-          [1, 4, 7],
-          [2, 5, 8],
-          [0, 4, 8],
-          [2, 4, 6],
-        ];
-        winCombos.forEach(item => {
-          let [a, b, c] = item;
-          if (
-            playerOneMoves.includes(a) &&
-            playerOneMoves.includes(b) &&
-            playerOneMoves.includes(c)
-          ) {
-            GamesService.clearBoard(knex, game_room, playerOneWon);
-            return;
-          }
-          if (
-            playerTwoMoves.includes(a) &&
-            playerTwoMoves.includes(b) &&
-            playerTwoMoves.includes(c)
-          ) {
-            GamesService.clearBoard(knex, game_room, playerTwoWon);
-            return;
-          }
-        });
+        GamesService.handleIfThereIsAWinner(knex, game); // checks if there is a combo with winning combo and updates database accordingly
         return game;
       })
       .then(game => {
