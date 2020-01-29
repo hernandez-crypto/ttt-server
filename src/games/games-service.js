@@ -5,7 +5,7 @@ const GamesService = {
         player_one_id: player_one.id,
         player_one_usrname: player_one.user_name,
         current_player: player_one.id,
-        game_room,
+        game_room
       })
       .into('game_session')
       .returning('*')
@@ -23,7 +23,7 @@ const GamesService = {
     return knex('game_session')
       .update({
         player_two_id: player_two.id,
-        player_two_usrname: player_two.user_name,
+        player_two_usrname: player_two.user_name
       })
       .where({ game_room })
       .returning('*')
@@ -61,10 +61,10 @@ const GamesService = {
     let boardCopy = [...game.board.split('')];
     let playerOneMoves = [];
     let playerOneWon = {
-      player_started_score: game.player_started_score + 1,
+      player_one_score: game.player_one_score + 1
     };
     let playerTwoWon = {
-      player_joined_score: game.player_joined_score + 1,
+      player_two_score: game.player_two_score + 1
     };
     let playerTwoMoves = [];
     boardCopy.forEach((square, index) => {
@@ -83,9 +83,9 @@ const GamesService = {
       [1, 4, 7],
       [2, 5, 8],
       [0, 4, 8],
-      [2, 4, 6],
+      [2, 4, 6]
     ];
-    winCombos.forEach(item => {
+    winCombos.forEach((item) => {
       let [a, b, c] = item;
       if (
         playerOneMoves.includes(a) &&
@@ -110,10 +110,10 @@ const GamesService = {
     return game;
   },
   checkIfBoardIsFull(board) {
-    if (!board.find(square => Number.isInteger(parseInt(square)))) {
+    if (!board.find((square) => Number.isInteger(parseInt(square)))) {
       return true;
     } else return false;
-  },
+  }
 };
 
 module.exports = GamesService;

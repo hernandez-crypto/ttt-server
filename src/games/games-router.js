@@ -11,7 +11,7 @@ gamesRouter
   .post(jsonBodyParser, (req, res, next) => {
     const { game_room } = req.body;
     GamesService.CreateNewGame(req.app.get('db'), req.user, game_room)
-      .then(board => {
+      .then((board) => {
         res
           .status(201)
           .json({ board })
@@ -26,7 +26,7 @@ gamesRouter
   .all(checkGameExists)
   .get((req, res, next) => {
     GamesService.RespondWithCurrentGame(req.app.get('db'), req.params.game_room)
-      .then(board => {
+      .then((board) => {
         res.json(board);
       })
       .catch(next);
@@ -37,21 +37,22 @@ gamesRouter
       req.params.game_room,
       req.user
     )
-      .then(board => {
+      .then((board) => {
         res.json(board);
       })
       .catch(next);
   })
   .patch(jsonBodyParser, (req, res, next) => {
+    console.log(req.user.id);
     let { game_room } = req.params;
     let { board, next_player } = req.body;
     let knex = req.app.get('db');
     GamesService.UpdateCurrentGame(knex, game_room, board, next_player)
-      .then(game => {
+      .then((game) => {
         GamesService.handleIfThereIsAWinner(knex, game); // checks if there is a combo with winning combo and updates database accordingly
         return game;
       })
-      .then(game => {
+      .then((game) => {
         res
           .status(201)
           .location(path.posix.join(req.originalUrl, `/${game.id}`))
@@ -69,7 +70,7 @@ async function checkGameExists(req, res, next) {
 
     if (!game)
       return res.status(404).json({
-        error: `Game doesn't exist`,
+        error: `Game doesn't exist`
       });
 
     res.game = game;
