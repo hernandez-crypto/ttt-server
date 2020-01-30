@@ -30,7 +30,7 @@ describe('Auth Endpoints', function() {
 
     requiredFields.forEach((field) => {
       const loginAttemptBody = {
-        user_name: testUser['user_name'],
+        user_name: testUser.user_name,
         password: testUser.password
       };
 
@@ -56,7 +56,7 @@ describe('Auth Endpoints', function() {
 
     it(`responds 400 'invalid user_name or password' when bad password`, () => {
       const userInvalidPass = {
-        user_name: testUser['user_name'],
+        user_name: testUser.user_name,
         password: 'incorrect'
       };
       return supertest(app)
@@ -67,15 +67,14 @@ describe('Auth Endpoints', function() {
 
     it(`responds 200 and JWT auth token using secret when valid credentials`, () => {
       const userValidCreds = {
-        user_name: testUser['user_name'],
+        user_name: testUser.user_name,
         password: testUser.password
       };
       const expectedToken = jwt.sign(
         { user_id: testUser.id },
         process.env.JWT_SECRET,
         {
-          subject: testUser['user_name'],
-          expiresIn: process.env.JWT_EXPIRY,
+          subject: testUser.user_name,
           algorithm: 'HS256'
         }
       );
@@ -83,7 +82,9 @@ describe('Auth Endpoints', function() {
         .post('/api/auth/login')
         .send(userValidCreds)
         .expect(200, {
-          authToken: expectedToken
+          authToken: expectedToken,
+          user_name: userValidCreds.user_name,
+          user_id: `${testUser.id}`
         });
     });
   });
@@ -91,25 +92,24 @@ describe('Auth Endpoints', function() {
   /**
    * @description Refresh token
    **/
-  describe(`PATCH /api/auth/login`, () => {
-    beforeEach('insert users', () => helpers.seedUsers(db, testUsers));
+  // describe.skip(`PUT /api/auth/login`, () => {
+  //   beforeEach('insert users', () => helpers.seedUsers(db, testUsers));
 
-    it(`responds 200 and JWT auth token using secret`, () => {
-      const expectedToken = jwt.sign(
-        { user_id: testUser.id },
-        process.env.JWT_SECRET,
-        {
-          subject: testUser['user_name'],
-          expiresIn: process.env.JWT_EXPIRY,
-          algorithm: 'HS256'
-        }
-      );
-      return supertest(app)
-        .put('/api/auth/login')
-        .set('Authorization', helpers.makeAuthHeader(testUser))
-        .expect(200, {
-          authToken: expectedToken
-        });
-    });
-  });
+  //   it(`responds 200 and JWT auth token using secret`, () => {
+  //     const expectedToken = jwt.sign(
+  //       { user_id: testUser.id },
+  //       process.env.JWT_SECRET,
+  //       {
+  //         subject: testUser.user_name,
+  //         algorithm: 'HS256'
+  //       }
+  //     );
+  //     return supertest(app)
+  //       .put('/api/auth/login')
+  //       .set('Authorization', helpers.makeAuthHeader(testUser))
+  //       .expect(200, {
+  //         authToken: expectedToken
+  //       });
+  //   });
+  // });
 });
