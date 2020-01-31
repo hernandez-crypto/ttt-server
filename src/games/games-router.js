@@ -10,6 +10,10 @@ gamesRouter
   .all(requireAuth)
   .post(jsonBodyParser, (req, res, next) => {
     const { game_room } = req.body;
+    if (!game_room)
+      return res
+        .status(400)
+        .json({ message: 'game_room must be supplied in the request body' });
     GamesService.CreateNewGame(req.app.get('db'), req.user, game_room)
       .then((board) => {
         res
@@ -25,6 +29,11 @@ gamesRouter
   .all(requireAuth)
   .all(checkGameExists)
   .get((req, res, next) => {
+    if (!req.params.game_room) {
+      return res
+        .status(400)
+        .json({ message: 'game_room must be supplied in query' });
+    }
     GamesService.RespondWithCurrentGame(req.app.get('db'), req.params.game_room)
       .then((board) => {
         res.json(board);
@@ -43,13 +52,15 @@ gamesRouter
       .catch(next);
   })
   .patch(jsonBodyParser, (req, res, next) => {
-    console.log(req.user.id);
     let { game_room } = req.params;
     let { board, next_player } = req.body;
+    if (!game_room || !board || !next_player) {
+      return res.status(400).json({ message: 'Missing A Required Field' });
+    }
     let knex = req.app.get('db');
     GamesService.UpdateCurrentGame(knex, game_room, board, next_player)
       .then((game) => {
-        GamesService.handleIfThereIsAWinner(knex, game); // checks if there is a combo with winning combo and updates database accordingly
+        GamesService.handleIfThereIsAWinner(knex, game);
         return game;
       })
       .then((game) => {

@@ -32,6 +32,39 @@ function makeUsersArray() {
   ];
 }
 
+function makeGamesArray() {
+  return [
+    {
+      game_id: 1,
+      game_room: 'game1',
+      date_created: '2020-01-30T23:34:20.352Z',
+      player_one_id: 1,
+      player_one_usrname: 'test-user-1',
+      player_one_score: 0,
+      player_two_id: null,
+      player_two_usrname: null,
+      player_two_score: 0,
+      current_player: 1,
+      board: '000000000',
+      round: 0
+    },
+    {
+      game_id: 2,
+      game_room: 'game2',
+      date_created: '2020-01-30T23:34:20.352Z',
+      player_one_id: 1,
+      player_one_usrname: 'test-user-1',
+      player_one_score: 0,
+      player_two_id: 2,
+      player_two_usrname: 'test-user-2',
+      player_two_score: 0,
+      current_player: 2,
+      board: '0X0000000',
+      round: 0
+    }
+  ];
+}
+
 /**
  * generate fixtures of languages and words for a given user
  * @param {object} user - contains `id` property
@@ -99,6 +132,15 @@ function seedUsers(db, users) {
   });
 }
 
+function seedGames(db, games) {
+  return db.transaction(async (trx) => {
+    await trx.into('game_session').insert(games);
+    await trx.raw(`SELECT setval('game_session_game_id_seq', ?)`, [
+      games[games.length - 1].game_id
+    ]);
+  });
+}
+
 /**
  * seed the databases with words and update sequence counter
  * @param {knex instance} db
@@ -109,7 +151,9 @@ function seedUsers(db, users) {
 module.exports = {
   makeKnexInstance,
   makeUsersArray,
+  makeGamesArray,
   makeAuthHeader,
   cleanTables,
-  seedUsers
+  seedUsers,
+  seedGames
 };
