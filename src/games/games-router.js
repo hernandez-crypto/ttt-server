@@ -53,12 +53,12 @@ gamesRouter
   })
   .patch(jsonBodyParser, (req, res, next) => {
     let { game_room } = req.params;
-    let { board, next_player } = req.body;
-    if (!game_room || !board || !next_player) {
-      return res.status(400).json({ message: 'Missing A Required Field' });
+    let { index } = req.body;
+    if (!index) {
+      return res.status(400).json({ message: 'Missing Value Index in Field' });
     }
     let knex = req.app.get('db');
-    GamesService.UpdateCurrentGame(knex, game_room, board, next_player)
+    GamesService.UpdateCurrentGame(knex, game_room, index)
       .then((game) => {
         GamesService.handleIfThereIsAWinner(knex, game);
         return game;

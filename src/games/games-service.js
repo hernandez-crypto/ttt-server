@@ -3,7 +3,7 @@ const GamesService = {
     return knex
       .insert({
         player_one_id: player_one.id,
-        player_one_usrname: player_one.user_name,
+        player_one_username: player_one.username,
         current_player: player_one.id,
         game_room
       })
@@ -23,7 +23,7 @@ const GamesService = {
     return knex('game_session')
       .update({
         player_two_id: player_two.id,
-        player_two_usrname: player_two.user_name
+        player_two_username: player_two.username
       })
       .where({ game_room })
       .returning('*')

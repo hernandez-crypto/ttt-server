@@ -21,12 +21,12 @@ function makeUsersArray() {
   return [
     {
       id: 1,
-      user_name: 'test-user-1',
+      username: 'test-user-1',
       password: 'password'
     },
     {
       id: 2,
-      user_name: 'test-user-2',
+      username: 'test-user-2',
       password: 'password'
     }
   ];
@@ -39,10 +39,10 @@ function makeGamesArray() {
       game_room: 'game1',
       date_created: '2020-01-30T23:34:20.352Z',
       player_one_id: 1,
-      player_one_usrname: 'test-user-1',
+      player_one_username: 'test-user-1',
       player_one_score: 0,
       player_two_id: null,
-      player_two_usrname: null,
+      player_two_username: null,
       player_two_score: 0,
       current_player: 1,
       board: '000000000',
@@ -53,10 +53,10 @@ function makeGamesArray() {
       game_room: 'game2',
       date_created: '2020-01-30T23:34:20.352Z',
       player_one_id: 1,
-      player_one_usrname: 'test-user-1',
+      player_one_username: 'test-user-1',
       player_one_score: 0,
       player_two_id: 2,
-      player_two_usrname: 'test-user-2',
+      player_two_username: 'test-user-2',
       player_two_score: 0,
       current_player: 2,
       board: '0X0000000',
@@ -78,7 +78,7 @@ function makeGamesArray() {
  */
 function makeAuthHeader(user, secret = process.env.JWT_SECRET) {
   const token = jwt.sign({ user_id: user.id }, secret, {
-    subject: user.user_name,
+    subject: user.username,
     algorithm: 'HS256'
   });
   return `Bearer ${token}`;

@@ -25,11 +25,11 @@ describe('User Endpoints', function() {
   describe(`POST /api/users`, () => {
     beforeEach('insert users', () => helpers.seedUsers(db, testUsers));
 
-    const requiredFields = ['user_name', 'password'];
+    const requiredFields = ['username', 'password'];
 
     requiredFields.forEach((field) => {
       const registerAttemptBody = {
-        user_name: 'test user_name',
+        username: 'test username',
         password: 'test password'
       };
 
@@ -46,7 +46,7 @@ describe('User Endpoints', function() {
 
     it(`responds 400 'Password should be longer than 5 characters' when empty password`, () => {
       const userShortPassword = {
-        user_name: 'test user_name',
+        username: 'test username',
         password: '1234'
       };
       return supertest(app)
@@ -57,7 +57,7 @@ describe('User Endpoints', function() {
 
     it(`responds 400 'Password should be less than 20 characters' when long password`, () => {
       const userLongPassword = {
-        user_name: 'test user_name',
+        username: 'test username',
         password: '*'.repeat(73)
       };
       return supertest(app)
@@ -68,7 +68,7 @@ describe('User Endpoints', function() {
 
     it(`responds 400 error when password starts with spaces`, () => {
       const userPasswordStartsSpaces = {
-        user_name: 'test user_name',
+        username: 'test username',
         password: ' 1Aa!2Bb@'
       };
       return supertest(app)
@@ -81,7 +81,7 @@ describe('User Endpoints', function() {
 
     it(`responds 400 error when password ends with spaces`, () => {
       const userPasswordEndsSpaces = {
-        user_name: 'test user_name',
+        username: 'test username',
         password: '1Aa!2Bb@ '
       };
       return supertest(app)
@@ -92,9 +92,9 @@ describe('User Endpoints', function() {
         });
     });
 
-    it(`responds 400 'User name already taken' when user_name isn't unique`, () => {
+    it(`responds 400 'User name already taken' when username isn't unique`, () => {
       const duplicateUser = {
-        user_name: testUser.user_name,
+        username: testUser.username,
         password: '11AAaa!!'
       };
       return supertest(app)
@@ -106,7 +106,7 @@ describe('User Endpoints', function() {
     describe(`Given a valid user`, () => {
       it(`responds 201, serialized user with no password`, () => {
         const newUser = {
-          user_name: 'test user_name',
+          username: 'test username',
           password: '11AAaa!!'
         };
         return supertest(app)
@@ -115,7 +115,7 @@ describe('User Endpoints', function() {
           .expect(201)
           .expect((res) => {
             expect(res.body).to.have.property('id');
-            expect(res.body.user_name).to.eql(newUser.user_name);
+            expect(res.body.username).to.eql(newUser.username);
             expect(res.body.name).to.eql(newUser.name);
             expect(res.body).to.not.have.property('password');
             expect(res.headers.location).to.eql(`/api/users/${res.body.id}`);
@@ -124,7 +124,7 @@ describe('User Endpoints', function() {
 
       it(`stores the new user in db with bcryped password`, () => {
         const newUser = {
-          user_name: 'test user_name',
+          username: 'test username',
           password: '11AAaa!!'
         };
         return supertest(app)
@@ -137,9 +137,7 @@ describe('User Endpoints', function() {
               .where({ id: res.body.id })
               .first()
               .then((row) => {
-                expect(row.user_name).to.eql(newUser.user_name);
-                expect(row.name).to.eql(newUser.name);
-
+                expect(row.username).to.eql(newUser.username);
                 return bcrypt.compare(newUser.password, row.password);
               })
               .then((compareMatch) => {
