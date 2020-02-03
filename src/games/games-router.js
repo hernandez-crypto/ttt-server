@@ -79,8 +79,8 @@ gamesRouter
       newBoard = newBoard.join('');
       GamesService.UpdateCurrentGame(knex, game_room, newBoard, otherPlayer)
         .then((game) => {
-          GamesService.handleIfThereIsAWinner(knex, game);
-          return game;
+          let updatedGame = GamesService.handleIfThereIsAWinner(knex, game);
+          return updatedGame;
         })
         .then((game) => {
           return res.status(200).json(game);
