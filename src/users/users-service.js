@@ -2,9 +2,9 @@ const bcrypt = require('bcryptjs');
 const xss = require('xss');
 
 const UsersService = {
-  hasUserWithUserName(db, user_name) {
+  hasUserWithUserName(db, username) {
     return db('users')
-      .where({ user_name })
+      .where({ username })
       .first()
       .then((user) => !!user);
   },

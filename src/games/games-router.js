@@ -15,10 +15,10 @@ gamesRouter
         .status(400)
         .json({ message: 'game_room must be supplied in the request body' });
     GamesService.CreateNewGame(req.app.get('db'), req.user, game_room)
-      .then((board) => {
+      .then((game) => {
         res
           .status(201)
-          .json({ board })
+          .json({ game })
           .end();
       })
       .catch(next);
@@ -51,25 +51,42 @@ gamesRouter
       })
       .catch(next);
   })
-  .patch(jsonBodyParser, (req, res, next) => {
+  .patch(jsonBodyParser, async (req, res, next) => {
     let { game_room } = req.params;
-    let { index } = req.body;
-    if (!index) {
-      return res.status(400).json({ message: 'Missing Value Index in Field' });
-    }
+    let { index, symbol } = req.body;
     let knex = req.app.get('db');
-    GamesService.UpdateCurrentGame(knex, game_room, index)
-      .then((game) => {
-        GamesService.handleIfThereIsAWinner(knex, game);
-        return game;
-      })
-      .then((game) => {
-        res
-          .status(201)
-          .location(path.posix.join(req.originalUrl, `/${game.id}`))
-          .json(game);
+    if (!index) {
+      return res
+        .status(400)
+        .json({ message: `Missing 'index' in request body` });
+    }
+    let board, otherPlayer;
+    await GamesService.RespondWithCurrentGame(
+      req.app.get('db'),
+      req.params.game_room
+    )
+      .then((gameInfo) => {
+        board = gameInfo.board;
+        otherPlayer =
+          gameInfo.player_one_id === parseInt(req.user.id)
+            ? gameInfo.player_two_id
+            : gameInfo.player_one_id;
       })
       .catch(next);
+    if (board[parseInt(index)] == '0') {
+      let newBoard = board.split('');
+      newBoard[parseInt(index)] = symbol;
+      newBoard = newBoard.join('');
+      GamesService.UpdateCurrentGame(knex, game_room, newBoard, otherPlayer)
+        .then((game) => {
+          GamesService.handleIfThereIsAWinner(knex, game);
+          return game;
+        })
+        .then((game) => {
+          return res.status(200).json(game);
+        })
+        .catch(next);
+    } else return res.status(200).json({ message: 'Please Wait' });
   });
 
 async function checkGameExists(req, res, next) {
