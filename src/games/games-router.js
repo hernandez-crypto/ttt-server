@@ -41,6 +41,11 @@ gamesRouter
       .catch(next);
   })
   .post((req, res, next) => {
+    if (!req.params.game_room) {
+      return res
+        .status(400)
+        .json({ message: 'game_room must be supplied in query' });
+    }
     GamesService.insertSecondPlayerIntoGame(
       req.app.get('db'),
       req.params.game_room,
@@ -55,11 +60,11 @@ gamesRouter
     let { game_room } = req.params;
     let { index, symbol } = req.body;
     let knex = req.app.get('db');
-    if (!index) {
-      return res
-        .status(400)
-        .json({ message: `Missing 'index' in request body` });
-    }
+    for (const key of [game_room, index, sybol])
+      if (value == null)
+        return res.status(400).json({
+          error: `Missing '${key}' in request body`
+        });
     let board, otherPlayer;
     await GamesService.RespondWithCurrentGame(
       req.app.get('db'),

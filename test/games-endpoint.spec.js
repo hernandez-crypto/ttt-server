@@ -82,20 +82,14 @@ describe('Games Endpoints', function() {
       return supertest(app)
         .patch('/api/games/game1')
         .set('Authorization', helpers.makeAuthHeader(testUser))
-        .send({
-          board: 'X0000O000',
-          next_player: '2'
-        })
-        .expect(201);
+        .send({ index: '1' })
+        .expect(200);
     });
     it(`responds with a 404 not found when the game_room isn't supplied in the request body`, () => {
       return supertest(app)
         .patch('/api/games')
         .set('Authorization', helpers.makeAuthHeader(testUser))
-        .send({
-          board: 'X0000O000',
-          next_player: '2'
-        })
+        .send({ index: '1' })
         .expect(404);
     });
   });
