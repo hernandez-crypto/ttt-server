@@ -1,6 +1,7 @@
 # Tic-Tac-Toe Server!
 
-This server was constructed to be used by the Tic-Tac-Toe client that lives at https://ttt-client.hernandezjulio58.now.sh/.
+    - Link to live project : https://ttt-client.hernandezjulio58.now.sh/
+
 The endpoints on this server are :
 
     - POST /api/auth/user. This endpoint requires a username and password to be sent through the request body. There are requirements for those strings which will be made apparent through error messages.
@@ -18,7 +19,7 @@ The endpoints on this server are :
 
 ## Technology Used
 
-    - Node.js, Postgresql, Heroku, JWT authentication
+    - Node, PostgreSQL, Express, Supertest, Chai, Bcrypt, Heroku, JWT
 
 ## Scripts
 
