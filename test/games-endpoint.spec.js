@@ -78,11 +78,18 @@ describe('Games Endpoints', function() {
     beforeEach('insert users', () => helpers.seedUsers(db, testUsers));
     beforeEach('insert games', () => helpers.seedGames(db, testGames));
 
-    it(`responds with a 201 when the game_room is supplied in the request body`, () => {
+    it(`responds with a 400 when the second player is missing`, () => {
       return supertest(app)
         .patch('/api/games/game1')
         .set('Authorization', helpers.makeAuthHeader(testUser))
         .send({ index: '1' })
+        .expect(400);
+    });
+    it(`responds with a 200 when the index is sent throught the req. body & the room name is supplied in the params`, () => {
+      return supertest(app)
+        .patch('/api/games/game2')
+        .set('Authorization', helpers.makeAuthHeader(testUser))
+        .send({ index: '1', symbol: 'X' })
         .expect(200);
     });
     it(`responds with a 404 not found when the game_room isn't supplied in the request body`, () => {

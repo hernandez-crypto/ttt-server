@@ -16,6 +16,10 @@ The endpoints on this server are :
 
     -PATCH /api/auth/games/:game_room. This endpoint requires authentication. This route also requires the board to be sent through using a string that represents the board. Ex. { board: '00000000X' }. It is the endpoint used to change the game state. The server checks for a winner on every request and handles that accordingly.
 
+## Technology Used
+
+    - Node.js, Postgresql, Heroku, JWT authentication
+
 ## Scripts
 
 Start the application `npm start`

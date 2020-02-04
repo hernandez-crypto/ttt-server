@@ -1,2 +1,3 @@
-INSERT INTO users (user_name, password) 
-     VALUES('sample','sample');
+INSERT INTO users (username, password)
+VALUES('demo',
+       'password');

@@ -60,8 +60,8 @@ gamesRouter
     let { game_room } = req.params;
     let { index, symbol } = req.body;
     let knex = req.app.get('db');
-    for (const key of [game_room, index, sybol])
-      if (value == null)
+    for (const key of [game_room, index, symbol])
+      if (key == null || key == undefined)
         return res.status(400).json({
           error: `Missing '${key}' in request body`
         });
@@ -78,6 +78,7 @@ gamesRouter
             : gameInfo.player_one_id;
       })
       .catch(next);
+
     if (board[parseInt(index)] == '0') {
       let newBoard = board.split('');
       newBoard[parseInt(index)] = symbol;
