@@ -1,8 +1,6 @@
 # Tic-Tac-Toe Server!
 
-    -Link to live project :
-
-[Tic-Tac-Toe](https://ttt-client.hernandezjulio58.now.sh/ 'Live Site')
+Link to live project : [Tic-Tac-Toe](https://ttt-client.hernandezjulio58.now.sh/ 'Live Site')
 
 The endpoints on this server are :
 
