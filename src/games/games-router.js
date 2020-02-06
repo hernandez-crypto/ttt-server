@@ -18,7 +18,7 @@ gamesRouter
       .then((game) => {
         res
           .status(201)
-          .json({ game })
+          .json({ ...game })
           .end();
       })
       .catch(next);
