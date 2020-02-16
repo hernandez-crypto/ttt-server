@@ -15,7 +15,7 @@
   },
   "keywords": [],
   "engines": {
-    "node": "12.12.0"
+    "node": "13.5.0"
   },
   "author": "Julio Hernandez",
   "dependencies": {
